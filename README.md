@@ -95,8 +95,10 @@ llm-tools-demo/
 ├── common.py                # utilidades compartidas: leer config, elegir dtype, extraer respuesta
 ├── 00_check_env.py          # Módulo 0
 ├── 01_hub_and_data.py       # Módulo 1
-├── 02_transformers_infer.py # Módulo 2
-├── 03_vllm_infer.py         # Módulo 3
+├── 02a_transformers_basic.py # Módulo 2a: ejemplo básico (3 prompts fijos)
+├── 02b_transformers_infer.py # Módulo 2b: GSM8K + tokens/s
+├── 03a_vllm_basic.py         # Módulo 3a: ejemplo básico (mismos 3 prompts)
+├── 03b_vllm_infer.py         # Módulo 3b: GSM8K, 5 muestras + tokens/s
 ├── 04_save_outputs.py       # Módulo 4
 ├── 05_lm_eval.sh            # Módulo 5
 ├── tasks/                   # YAML de la tarea propia de LM Eval Harness
@@ -110,7 +112,9 @@ llm-tools-demo/
 | --- | --- | --- | --- |
 | 0. Entorno | `00_check_env.py` | GPUs, VRAM libre, `dtype` y versiones | entorno listo; script en curso |
 | 1. Hub y datos | `01_hub_and_data.py` | Modelo en caché, GSM8K y prompts con chat template | pendiente |
-| 2. Inferencia con transformers | `02_transformers_infer.py` | 1 respuesta por pregunta y tokens/s | pendiente |
-| 3. Inferencia con vLLM | `03_vllm_infer.py` | 5 respuestas por pregunta y tokens/s | pendiente |
+| 2a. transformers básico | `02a_transformers_basic.py` | 3 prompts fijos con chat template | pendiente |
+| 2b. Inferencia con transformers | `02b_transformers_infer.py` | 1 respuesta por pregunta de GSM8K y tokens/s | pendiente |
+| 3a. vLLM básico | `03a_vllm_basic.py` | los mismos 3 prompts que 2a, ahora con vLLM | pendiente |
+| 3b. Inferencia con vLLM | `03b_vllm_infer.py` | 5 respuestas por pregunta de GSM8K y tokens/s | pendiente |
 | 4. Guardar y analizar | `04_save_outputs.py` | Parquet + metadatos; accuracy y maj@k | pendiente |
 | 5. LM Eval Harness | `05_lm_eval.sh`, `tasks/` | gsm8k con backends hf y vllm; maj@k | pendiente |

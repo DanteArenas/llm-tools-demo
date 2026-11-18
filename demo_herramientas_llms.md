@@ -60,12 +60,14 @@ flowchart LR
 4. **Inferencia con transformers (3 min)**
    - Mensaje: es la opción más flexible y la más cercana al modelo, ideal para explorar y depurar.
    - Herramientas: `pipeline("text-generation")` y `AutoModelForCausalLM.generate()` con el chat template del modelo.
-   - Mostrar: responder las 10 preguntas con una respuesta cada una y medir tokens por segundo.
+   - Mostrar primero el ejemplo básico (`02a`): 3 prompts fijos, el chat template y la respuesta, en un script corto que se lee completo en pantalla.
+   - Luego (`02b`): responder las 10 preguntas de GSM8K con una respuesta cada una y medir tokens por segundo.
    - Mención: con varias GPUs, `device_map="auto"` (accelerate) reparte un modelo grande entre GPUs.
 5. **Inferencia con vLLM (4 min)**
    - Mensaje: para generar mucho, un motor de inferencia agrupa peticiones y aprovecha mejor la GPU.
    - Herramientas: `LLM` y `SamplingParams(n=5, temperature=0.8, seed=...)` para generación en lote.
-   - Mostrar: las mismas 10 preguntas con 5 respuestas cada una, y comparar tokens por segundo con el bloque anterior.
+   - Mostrar primero el ejemplo básico (`03a`): los mismos 3 prompts y parámetros que `02a`, para comparar las dos APIs lado a lado.
+   - Luego (`03b`): las mismas 10 preguntas de GSM8K con 5 respuestas cada una, y comparar tokens por segundo con el bloque anterior.
    - Mención: `tensor_parallel_size` si el modelo no cabe en una GPU; `vllm serve` levanta una API compatible con OpenAI.
 6. **Guardar las salidas (3 min)**
    - Mensaje: guardar todas las generaciones crudas junto con lo necesario para repetir la corrida, porque el análisis se hace después y sin volver a llamar al modelo.
@@ -109,11 +111,13 @@ Son 6 módulos cortos que cubren los bloques 2 a 7 de la demo, más uno opcional
 | --- | --- | --- | --- | --- | --- |
 | 0 | Entorno | Entorno en WSL2 con uv, Python 3.12 y versiones fijadas (`pyproject.toml`, `uv.lock`); `config.yaml` inicial; detección de GPUs, VRAM libre y capacidad de cómputo con PyTorch | Entornos reproducibles, elegir `dtype` según la GPU, cuánta VRAM queda realmente libre | `00_check_env.py`, `pyproject.toml`, `config.yaml` | Imprime GPUs, VRAM total y libre, `dtype` elegido, `gpu_memory_utilization` sugerido y versiones, o avisa si no hay GPU |
 | 1 | Hub y datos | Login, descarga del modelo a la caché, carga de GSM8K y prompts con chat template | Caché del Hub, chat templates, respuesta gold tras `####` | `01_hub_and_data.py` | 10 prompts con su respuesta gold |
-| 2 | Inferencia con transformers | `pipeline` primero y luego `generate()` | Tokenización y parámetros de generación | `02_transformers_infer.py` | 10 respuestas y tokens por segundo |
-| 3 | Inferencia con vLLM | `LLM` con `SamplingParams(n=5, seed=...)` y límites de memoria para 6 GB (`max_model_len` ≈ 2048, `gpu_memory_utilization` ≈ 0.70, `enforce_eager=True`) | Generación en lote y muestreo múltiple | `03_vllm_infer.py` | 50 respuestas y comparación de tokens por segundo con el módulo 2 |
+| 2 | Inferencia con transformers | (a) ejemplo básico con 3 prompts fijos y `pipeline`; (b) `generate()` sobre GSM8K | Chat template, tokenización y parámetros de generación | `02a_transformers_basic.py`, `02b_transformers_infer.py` | (a) 3 respuestas legibles; (b) 10 respuestas y tokens por segundo |
+| 3 | Inferencia con vLLM | (a) ejemplo básico con los mismos 3 prompts de 02a; (b) `LLM` con `SamplingParams(n=5, seed=...)` y límites de memoria para 6 GB (`max_model_len` ≈ 2048, `gpu_memory_utilization` ≈ 0.70, `enforce_eager=True`) | Generación en lote y muestreo múltiple | `03a_vllm_basic.py`, `03b_vllm_infer.py` | (a) las mismas 3 respuestas de 02a, ahora con vLLM; (b) 50 respuestas y comparación de tokens por segundo con el módulo 2 |
 | 4 | Guardar y analizar salidas | Extraer el número final, marcar aciertos, escribir JSONL o Parquet con una fila por muestra y un archivo con config, semilla, prompt, revisión del modelo y versiones | Datos crudos vs. derivados, metadatos, generar una vez y analizar muchas | `04_save_outputs.py` | Releer el archivo y calcular accuracy y maj@k (k = 1…5) sin regenerar |
 | 5 | LM Eval Harness | `gsm8k` con `--model hf` y `--model vllm`, `--limit 20`, `--log_samples`; tarea propia en YAML basada en `gsm8k_cot_self_consistency` con 5 repeticiones (si el tiempo no alcanza, queda como opcional) | Evaluación estándar, backends, tareas propias | `05_lm_eval.sh`, `tasks/` | Dos archivos de resultados comparables y la métrica maj@k de la tarea propia |
 | 6 (opcional) | Extras | Solo si sobra tiempo, uno a elección: registro en W&B o MLflow; `vllm serve` + cliente `openai`; carga en 4 bits con bitsandbytes | Seguimiento de corridas, inferencia como servicio, cuantización | `06_extras.py` | Corrida visible en el panel, respuesta vía API o menor uso de VRAM |
+
+Prioridad: alcance chico de la demo y buena navegación por sobre un repo mínimo (por eso los módulos 2 y 3 se dividen en un ejemplo básico y uno completo).
 
 En cada módulo te explico el objetivo, tú escribes un esqueleto con `TODO`, lo revisamos y recién entonces lo completamos y validamos.
 
@@ -129,8 +133,10 @@ llm-tools-demo/
 ├── common.py              # utilidades compartidas: leer config, elegir dtype, extraer respuesta
 ├── 00_check_env.py
 ├── 01_hub_and_data.py
-├── 02_transformers_infer.py
-├── 03_vllm_infer.py
+├── 02a_transformers_basic.py   # ejemplo básico: 3 prompts fijos
+├── 02b_transformers_infer.py   # GSM8K + tokens/s
+├── 03a_vllm_basic.py           # ejemplo básico: mismos 3 prompts
+├── 03b_vllm_infer.py           # GSM8K, n=5 + tokens/s
 ├── 04_save_outputs.py
 ├── 05_lm_eval.sh
 ├── tasks/                 # YAML de la tarea propia de LM Eval Harness
