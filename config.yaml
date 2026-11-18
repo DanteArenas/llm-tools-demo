@@ -1,2 +1,18 @@
-# Configuración única de la demo. Se espera: modelo, dtype, nº de preguntas, n (muestras),
-# temperatura, semilla y límites de vLLM (max_model_len, gpu_memory_utilization, enforce_eager).
+# Configuración única de la demo. La leen todos los módulos con common.load_config().
+
+model: Qwen/Qwen2.5-1.5B-Instruct   # fallback: Qwen/Qwen2.5-0.5B-Instruct
+dtype: auto                         # auto | float16 | bfloat16 | float32
+
+# Datos y muestreo
+num_questions: 10
+n_samples: 5
+temperature: 0.8
+top_p: 0.95
+max_tokens: 512
+seed: 1234
+
+# Límites de vLLM (ajustados para 6 GB)
+vllm:
+  max_model_len: 2048
+  gpu_memory_utilization: 0.70
+  enforce_eager: true
