@@ -1,2 +1,21 @@
-# Se completa en el Módulo 0: Python 3.12 y dependencias fijadas con uv
-# (vllm primero, torch derivado de vllm; transformers, lm_eval, datasets, huggingface_hub, pandas, pyyaml).
+[project]
+name = "llm-tools-demo"
+version = "0.1.0"
+description = "Demo: herramientas para diseñar, ejecutar, guardar y evaluar experimentos con LLMs"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+# vllm fija la versión de torch (vllm 0.33.0 -> torch==2.14.0) y el rango de transformers.
+# Para cambiar de versión: editar aquí y correr `uv lock` + `uv sync`.
+dependencies = [
+    "vllm==0.33.0",
+    "transformers==5.20.2",
+    "lm-eval[hf,vllm]==0.4.13",
+    "datasets==5.2.0",
+    "huggingface-hub==2.4.0",
+    "pandas==3.1.1",
+    "pyarrow==26.0.1",
+    "pyyaml==6.0.3",
+]
+
+[tool.uv]
+package = false  # solo describe el entorno; los scripts no se empaquetan
