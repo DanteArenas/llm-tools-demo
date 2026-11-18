@@ -221,3 +221,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Salidas de la demo (se conserva solo la carpeta)
+outputs/*
+!outputs/.gitkeep

@@ -1,0 +1,2 @@
+# Configuración única de la demo. Se espera: modelo, dtype, nº de preguntas, n (muestras),
+# temperatura, semilla y límites de vLLM (max_model_len, gpu_memory_utilization, enforce_eager).

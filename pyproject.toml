@@ -1,0 +1,2 @@
+# Se completa en el Módulo 0: Python 3.12 y dependencias fijadas con uv
+# (vllm primero, torch derivado de vllm; transformers, lm_eval, datasets, huggingface_hub, pandas, pyyaml).
